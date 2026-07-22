@@ -77,9 +77,10 @@
 	local myPanel = ::ModMathRun.Mod.ModSettings.getPanel();
 	myPanel.Name = "Challenge runs settings";
 	local namesPage = ::ModMathRun.Mod.ModSettings.addPage("Magnus Run");
-	local namesEnabledSetting = namesPage.addBooleanSetting("MagnusRunEnabled", true, "Magnus Run enabled");
+	namesPage.addDivider("MagnusRunEnabledBefore");
+	local namesEnabledSetting = namesPage.addBooleanSetting("MagnusRunEnabled", true, "Magnus Run enabled", "Enables the Magnus Run");
 	namesEnabledSetting.setDescription("Enable the Magnus Run settings. Enabling this disables Math Run.");
-	namesPage.addDivider("MagnusRunEnabled");
+	namesPage.addDivider("MagnusRunEnabledAfter");
 	local initialNamesSetting = namesPage.addStringSetting(
 		"InitialBrotherNames",
 		::ModMathRun.DefaultInitialBrotherNames,
@@ -96,9 +97,10 @@
 	});
 
 	local costPage = ::ModMathRun.Mod.ModSettings.addPage("Math Run");
-	local costEnabledSetting = costPage.addBooleanSetting("MathRunEnabled", false, "Math Run enabled");
+	costPage.addDivider("MathRunEnabledBefore");
+	local costEnabledSetting = costPage.addBooleanSetting("MathRunEnabled", false, "Math Run enabled", "Enables the Math Run");
 	costEnabledSetting.setDescription("Enable the Math Run settings. Enabling this disables Magnus Run.");
-	costPage.addDivider("MathRunEnabled");
+	costPage.addDivider("MathRunEnabledAfter");
 	local costDividerSetting = costPage.addStringSetting(
 		"CostDivider",
 		::ModMathRun.DefaultCostDivider,
@@ -191,5 +193,5 @@
 	// Includes the 'load' file of your private folder
 	// Within this file, you can execute things or load more files (such as hooks)
 	// as to better organise your mod, not clutter this file, and load things in order
-	::include("mod_math_run/load.nut");
+	// ::include("mod_math_run/load.nut");
 });
