@@ -31,6 +31,28 @@ ModMathRun.updateBrotherNames = function ()
     ModMathRun.BrotherNames = BrotherNamesString ? BrotherNamesString.split("|") : [];
 };
 
+ModMathRun.getCostDivider = function ()
+{
+    var value = MSU.getSettingValue("mod_math_run", "CostDivider");
+    var valueString = String(value).trim();
+
+    if (!/^[1-9]\d*$/.test(valueString))
+    {
+        return 15;
+    }
+
+    var divider = parseInt(valueString, 10);
+    return isFinite(divider) ? divider : 15;
+};
+
+var ModMathRun_switchToSettingsPage = ModSettingsScreen.prototype.switchToPage;
+ModSettingsScreen.prototype.switchToPage = function (_panel, _page)
+{
+    ModMathRun_switchToSettingsPage.call(this, _panel, _page);
+    this.mModPageScrollContainer.toggleClass('mod-math-run-settings-page', _panel.id === 'mod_math_run');
+};
+
+
 ModMathRun.prototype = Object.create(MSUBackendConnection.prototype);
 Object.defineProperty(ModMathRun.prototype, 'constructor', {
     value: ModMathRun,
@@ -65,12 +87,13 @@ WorldTownScreenHireDialogModule.prototype.createDIV = function (_parentDiv)
             // logConsole("ModMathRun: BrotherNames:", JSON.stringify(data));
             // logConsole("ModMathRun: BrotherNames:", JSON.stringify(ModMathRun.BrotherNames));
             ModMathRun.updateBrotherNames();
+            var costDivider = ModMathRun.getCostDivider();
             if (data !== null && data !== undefined && (
                 typeof data.Name === 'string' &&
                 ModMathRun.BrotherNames.indexOf(data.Name) === -1
             )
                 &&
-                (typeof data.InitialMoneyCost !== 'number' || data.InitialMoneyCost % 15 !== 0))
+                (typeof data.InitialMoneyCost !== 'number' || data.InitialMoneyCost % costDivider !== 0))
             {
                 this.mDetailsPanel.HireButton.enableButton(false);
             }

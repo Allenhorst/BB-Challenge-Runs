@@ -7,3 +7,6 @@ gfx/mods/brushes/
 .editorconfig
 .utils/
 .bbbuilder/
+.\mod_math_run\ui\mods\mod_math_run\mod_plan_perks.js
+.\mod_math_run\mod_math_run\load.nut
+.\mod_math_run\mod_math_run\test.nut
