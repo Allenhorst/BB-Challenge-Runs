@@ -10,6 +10,8 @@
 	Connection = null,
 	BrotherNames = [],
 	NamesDelimiter = "|",
+	DefaultInitialBrotherNames = "Magnus|Karl|Steinar|Ragnar|Geralt",
+	DefaultCostDivider = "15",
 }
 ::ModMathRun.serializeBrotherNamesWithFlag <- function()
 {
@@ -32,12 +34,19 @@
 
 ::ModMathRun.setBrotherNames <- function(_firstBrotherName)
 {
-	local names = [_firstBrotherName, "Magnus", "Karl", "Steinar", "Ragnar", "Geralt"];
+	local initialNamesSetting = this.Mod.ModSettings.getSetting("InitialBrotherNames");
+	local names = this.getNamesAsArrayFromString(initialNamesSetting.getValue());
+	names.insert(0, _firstBrotherName);
 	this.BrotherNames = names;
 }
 
 ::ModMathRun.stringifyNames <- function(_namesAsArray)
 {
+	if (_namesAsArray.len() == 0)
+	{
+		return "";
+	}
+
 	local resultString = "";
 	foreach(name in _namesAsArray){
 		resultString += name + this.NamesDelimiter;
@@ -51,13 +60,8 @@
     {
         return [];
     }
-	if(_namesString.find(this.NamesDelimiter) == null)
-	{
-		return [];
-	}
-	local result = [];
 	local result = split(_namesString, this.NamesDelimiter);
-	return result
+	return result;
 }
 
 // Instantiate the Modern Hooks object, add MSU as a requirement, and queue after MSU
@@ -71,13 +75,29 @@
 
 	// Instantiates the JS connection to the file ui/mods/mod_math_run/mod_math_run.js
 	local myPanel = ::ModMathRun.Mod.ModSettings.getPanel();
-	local generalPage = ::ModMathRun.Mod.ModSettings.addPage("General");
-	local namesSetting = generalPage.addStringSetting("BrotherNames", "", "BrotherNames");
-	namesSetting.setDescription("A list of brother names separated by the '|' character. These names will be used to identify brothers in the hire roster.");
+	local namesPage = ::ModMathRun.Mod.ModSettings.addPage("Names");
+	local initialNamesSetting = namesPage.addStringSetting(
+		"InitialBrotherNames",
+		::ModMathRun.DefaultInitialBrotherNames,
+		"Initial Brother Names"
+	);
+	initialNamesSetting.setDescription("Names added at the start of a new campaign, separated by the '|' character. Edit this setting before starting the campaign. The starting brother's name is added automatically.");
+	namesPage.addDivider("Names");
+
+	local namesSetting = namesPage.addStringSetting("BrotherNames", "", "Campaign Brother Names");
+	namesSetting.setDescription("The names used by the current campaign, separated by the '|' character. This is initialized from the starting brother and the Initial Brother Names setting.");
 	namesSetting.addAfterChangeCallback(function(_value)
 	{
 		::ModMathRun.BrotherNames = ::ModMathRun.getNamesAsArrayFromString(this.getValue());
 	});
+
+	local costPage = ::ModMathRun.Mod.ModSettings.addPage("Cost");
+	local costDividerSetting = costPage.addStringSetting(
+		"CostDivider",
+		::ModMathRun.DefaultCostDivider,
+		"Cost Divider"
+	);
+	costDividerSetting.setDescription("A positive whole number used for the recruit cost divisibility check. Invalid values fall back to 15.");
 	::ModMathRun.Connection = ::new("scripts/mods/msu/js_connection");
 	::ModMathRun.Connection.m.ID = ::ModMathRun.Name;
 	::ModMathRun.Connection.onQueryBrotherNames <- function()
@@ -109,7 +129,6 @@
 			if (brothers.len() > 0)
 			{
 				::ModMathRun.setBrotherNames(brothers[0].getNameOnly());
-				local generalPage = ::ModMathRun.Mod.ModSettings.getPage("General");
 				local brotherNamesSetting = ::ModMathRun.Mod.ModSettings.getSetting("BrotherNames");
 				local namesString = ::ModMathRun.stringifyNames(::ModMathRun.BrotherNames);
 				brotherNamesSetting.set(namesString);
