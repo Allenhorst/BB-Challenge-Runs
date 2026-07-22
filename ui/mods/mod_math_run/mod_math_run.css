@@ -1,0 +1,21 @@
+.msu-settings-screen .mod-math-run-settings-page > .setting-container
+{
+    width: 72rem !important;
+    float: none !important;
+    clear: both;
+}
+
+.msu-settings-screen .mod-math-run-settings-page > .string-container .setting-content-container
+{
+    width: 71rem !important;
+    box-sizing: border-box;
+}
+
+.msu-settings-screen .mod-math-run-settings-page > .string-container .setting-content-container > .string-input
+{
+    width: 60rem !important;
+    max-width: 60rem !important;
+    box-sizing: border-box;
+    background-size: 60rem 4rem !important;
+    -webkit-background-size: 60rem 4rem !important;
+}
