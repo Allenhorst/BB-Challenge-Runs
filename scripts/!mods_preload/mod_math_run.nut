@@ -75,7 +75,11 @@
 
 	// Instantiates the JS connection to the file ui/mods/mod_math_run/mod_math_run.js
 	local myPanel = ::ModMathRun.Mod.ModSettings.getPanel();
-	local namesPage = ::ModMathRun.Mod.ModSettings.addPage("Names");
+	myPanel.Name = "Challenge runs settings";
+	local namesPage = ::ModMathRun.Mod.ModSettings.addPage("Magnus Run");
+	local namesEnabledSetting = namesPage.addBooleanSetting("MagnusRunEnabled", true, "Magnus Run enabled");
+	namesEnabledSetting.setDescription("Enable the Magnus Run settings. Enabling this disables Math Run.");
+	namesPage.addDivider("MagnusRunEnabled");
 	local initialNamesSetting = namesPage.addStringSetting(
 		"InitialBrotherNames",
 		::ModMathRun.DefaultInitialBrotherNames,
@@ -91,13 +95,31 @@
 		::ModMathRun.BrotherNames = ::ModMathRun.getNamesAsArrayFromString(this.getValue());
 	});
 
-	local costPage = ::ModMathRun.Mod.ModSettings.addPage("Cost");
+	local costPage = ::ModMathRun.Mod.ModSettings.addPage("Math Run");
+	local costEnabledSetting = costPage.addBooleanSetting("MathRunEnabled", false, "Math Run enabled");
+	costEnabledSetting.setDescription("Enable the Math Run settings. Enabling this disables Magnus Run.");
+	costPage.addDivider("MathRunEnabled");
 	local costDividerSetting = costPage.addStringSetting(
 		"CostDivider",
 		::ModMathRun.DefaultCostDivider,
 		"Cost Divider"
 	);
 	costDividerSetting.setDescription("A positive whole number used for the recruit cost divisibility check. Invalid values fall back to 15.");
+
+	namesEnabledSetting.addAfterChangeCallback(function(_oldValue)
+	{
+		if (this.getValue())
+		{
+			::ModMathRun.Mod.ModSettings.getSetting("MathRunEnabled").set(false);
+		}
+	});
+	costEnabledSetting.addAfterChangeCallback(function(_oldValue)
+	{
+		if (this.getValue())
+		{
+			::ModMathRun.Mod.ModSettings.getSetting("MagnusRunEnabled").set(false);
+		}
+	});
 	::ModMathRun.Connection = ::new("scripts/mods/msu/js_connection");
 	::ModMathRun.Connection.m.ID = ::ModMathRun.Name;
 	::ModMathRun.Connection.onQueryBrotherNames <- function()
