@@ -87,12 +87,17 @@ WorldTownScreenHireDialogModule.prototype.createDIV = function (_parentDiv)
             // logConsole("ModMathRun: BrotherNames:", JSON.stringify(ModMathRun.BrotherNames));
             ModMathRun.updateBrotherNames();
             var costDivider = ModMathRun.getCostDivider();
-            if (data !== null && data !== undefined && (
+            var magnusRunEnabled = MSU.getSettingValue("mod_math_run", "MagnusRunEnabled") === true;
+            var mathRunEnabled = MSU.getSettingValue("mod_math_run", "MathRunEnabled") === true;
+
+            var failsMagnusRun = magnusRunEnabled && data !== null && data !== undefined &&
                 typeof data.Name === 'string' &&
-                ModMathRun.BrotherNames.indexOf(data.Name) === -1
-            )
-                &&
-                (typeof data.InitialMoneyCost !== 'number' || data.InitialMoneyCost % costDivider !== 0))
+                ModMathRun.BrotherNames.indexOf(data.Name) === -1;
+
+            var failsMathRun = mathRunEnabled && data !== null && data !== undefined &&
+                (typeof data.InitialMoneyCost !== 'number' || data.InitialMoneyCost % costDivider !== 0);
+
+            if (failsMagnusRun || failsMathRun)
             {
                 this.mDetailsPanel.HireButton.enableButton(false);
             }
