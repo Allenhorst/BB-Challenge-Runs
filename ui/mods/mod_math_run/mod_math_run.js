@@ -52,6 +52,7 @@ ModSettingsScreen.prototype.switchToPage = function (_panel, _page)
     this.mModPageScrollContainer.toggleClass('mod-math-run-settings-page', _panel.id === 'mod_math_run');
 };
 
+
 ModMathRun.prototype = Object.create(MSUBackendConnection.prototype);
 Object.defineProperty(ModMathRun.prototype, 'constructor', {
     value: ModMathRun,
@@ -87,17 +88,12 @@ WorldTownScreenHireDialogModule.prototype.createDIV = function (_parentDiv)
             // logConsole("ModMathRun: BrotherNames:", JSON.stringify(ModMathRun.BrotherNames));
             ModMathRun.updateBrotherNames();
             var costDivider = ModMathRun.getCostDivider();
-            var magnusRunEnabled = MSU.getSettingValue("mod_math_run", "MagnusRunEnabled") === true;
-            var mathRunEnabled = MSU.getSettingValue("mod_math_run", "MathRunEnabled") === true;
-
-            var failsMagnusRun = magnusRunEnabled && data !== null && data !== undefined &&
+            if (data !== null && data !== undefined && (
                 typeof data.Name === 'string' &&
-                ModMathRun.BrotherNames.indexOf(data.Name) === -1;
-
-            var failsMathRun = mathRunEnabled && data !== null && data !== undefined &&
-                (typeof data.InitialMoneyCost !== 'number' || data.InitialMoneyCost % costDivider !== 0);
-
-            if (failsMagnusRun || failsMathRun)
+                ModMathRun.BrotherNames.indexOf(data.Name) === -1
+            )
+                &&
+                (typeof data.InitialMoneyCost !== 'number' || data.InitialMoneyCost % costDivider !== 0))
             {
                 this.mDetailsPanel.HireButton.enableButton(false);
             }

@@ -75,53 +75,28 @@
 
 	// Instantiates the JS connection to the file ui/mods/mod_math_run/mod_math_run.js
 	local myPanel = ::ModMathRun.Mod.ModSettings.getPanel();
-	myPanel.Name = "Challenge runs settings";
-	local namesPage = ::ModMathRun.Mod.ModSettings.addPage("Magnus Run");
-	namesPage.addDivider("MagnusRunEnabledBefore");
-	local namesEnabledSetting = namesPage.addBooleanSetting("MagnusRunEnabled", true, "Magnus Run enabled", "Enables the Magnus Run");
-	namesEnabledSetting.setDescription("Enable the Magnus Run settings. Enabling this disables Math Run.");
-	namesPage.addDivider("MagnusRunEnabledAfter");
-	local initialNamesSetting = namesPage.addStringSetting(
+	local generalPage = ::ModMathRun.Mod.ModSettings.addPage("General");
+	local initialNamesSetting = generalPage.addStringSetting(
 		"InitialBrotherNames",
 		::ModMathRun.DefaultInitialBrotherNames,
 		"Initial Brother Names"
 	);
 	initialNamesSetting.setDescription("Names added at the start of a new campaign, separated by the '|' character. Edit this setting before starting the campaign. The starting brother's name is added automatically.");
-	namesPage.addDivider("Names");
-
-	local namesSetting = namesPage.addStringSetting("BrotherNames", "", "Campaign Brother Names");
-	namesSetting.setDescription("The names used by the current campaign, separated by the '|' character. This is initialized from the starting brother and the Initial Brother Names setting.");
-	namesSetting.addAfterChangeCallback(function(_value)
-	{
-		::ModMathRun.BrotherNames = ::ModMathRun.getNamesAsArrayFromString(this.getValue());
-	});
-
-	local costPage = ::ModMathRun.Mod.ModSettings.addPage("Math Run");
-	costPage.addDivider("MathRunEnabledBefore");
-	local costEnabledSetting = costPage.addBooleanSetting("MathRunEnabled", false, "Math Run enabled", "Enables the Math Run");
-	costEnabledSetting.setDescription("Enable the Math Run settings. Enabling this disables Magnus Run.");
-	costPage.addDivider("MathRunEnabledAfter");
-	local costDividerSetting = costPage.addStringSetting(
+	generalPage.addDivider("1");
+	local costDividerSetting = generalPage.addStringSetting(
 		"CostDivider",
 		::ModMathRun.DefaultCostDivider,
 		"Cost Divider"
 	);
 	costDividerSetting.setDescription("A positive whole number used for the recruit cost divisibility check. Invalid values fall back to 15.");
-
-	namesEnabledSetting.addAfterChangeCallback(function(_oldValue)
+	generalPage.addDivider("2");
+	local namesSetting = generalPage.addStringSetting("BrotherNames", "", "BrotherNames");
+	namesSetting.setDescription("The names used by the current campaign, separated by the '|' character. This is initialized from the starting brother and the Initial Brother Names setting.");
+	namesSetting.addAfterChangeCallback(function(_value)
 	{
-		if (this.getValue())
-		{
-			::ModMathRun.Mod.ModSettings.getSetting("MathRunEnabled").set(false);
-		}
+		::ModMathRun.BrotherNames = ::ModMathRun.getNamesAsArrayFromString(this.getValue());
 	});
-	costEnabledSetting.addAfterChangeCallback(function(_oldValue)
-	{
-		if (this.getValue())
-		{
-			::ModMathRun.Mod.ModSettings.getSetting("MagnusRunEnabled").set(false);
-		}
-	});
+	generalPage.addDivider("3");
 	::ModMathRun.Connection = ::new("scripts/mods/msu/js_connection");
 	::ModMathRun.Connection.m.ID = ::ModMathRun.Name;
 	::ModMathRun.Connection.onQueryBrotherNames <- function()
