@@ -128,7 +128,6 @@
 			if (brothers.len() > 0)
 			{
 				::ModMathRun.setBrotherNames(brothers[0].getNameOnly());
-				local generalPage = ::ModMathRun.Mod.ModSettings.getPage("General");
 				local brotherNamesSetting = ::ModMathRun.Mod.ModSettings.getSetting("BrotherNames");
 				local namesString = ::ModMathRun.stringifyNames(::ModMathRun.BrotherNames);
 				brotherNamesSetting.set(namesString);
@@ -169,5 +168,5 @@
 	// Includes the 'load' file of your private folder
 	// Within this file, you can execute things or load more files (such as hooks)
 	// as to better organise your mod, not clutter this file, and load things in order
-	::include("mod_math_run/load.nut");
+	// ::include("mod_math_run/load.nut");
 });
